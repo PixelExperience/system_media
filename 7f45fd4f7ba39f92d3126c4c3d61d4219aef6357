@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "21c5361a_0a9bd002",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 1
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000463
+      },
+      "writtenOn": "2021-12-06T15:43:00Z",
+      "side": 1,
+      "message": "Taken from https://github.com/PixelExperience/system_media/commit/14d94f20888102267fa318fc9db82f8b38fc60f7\n\nWhich is needed for sm8350 platform. Since audio_policy_configuration for lahaina is in /vendor/etc/audio/sku_lahaina_qssi as per caf.",
+      "revId": "7f45fd4f7ba39f92d3126c4c3d61d4219aef6357",
+      "serverId": "8ba0da3e-d57f-4bbe-ac74-faf358ba962a"
+    }
+  ]
+}
