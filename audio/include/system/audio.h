@@ -737,8 +737,6 @@ struct audio_port {
 typedef enum : int32_t {
     AUDIO_STANDARD_NONE = 0,
     AUDIO_STANDARD_EDID = 1,
-    AUDIO_STANDARD_SADB = 2,
-    AUDIO_STANDARD_VSADB = 3,
 } audio_standard_t;
 
 /**
