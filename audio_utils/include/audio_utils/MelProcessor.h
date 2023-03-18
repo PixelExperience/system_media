@@ -63,9 +63,9 @@ public:
                                     audio_port_handle_t deviceId) const = 0;
 
         /**
-         * Called when the momentary exposure exceeds the RS2 value.
+         * Called when the momentary exposure exceeds the RS2 upper bound.
          *
-         * Note: RS2 is configurable vie MelProcessor#setOutputRs2.
+         * Note: RS2 is configurable vie MelProcessor#setOutputRs2UpperBound.
          */
         virtual void onMomentaryExposure(float currentMel, audio_port_handle_t deviceId) const = 0;
     };
@@ -80,7 +80,7 @@ public:
      *                          else the constructor will abort.
      * \param callback          reports back the new mel values.
      * \param deviceId          the device ID for the MEL callbacks
-     * \param rs2Value          initial RS2 value to use
+     * \param rs2Value          initial RS2 upper bound to use
      * \param maxMelsCallback   the number of max elements a callback can have.
      */
     MelProcessor(uint32_t sampleRate,
@@ -92,18 +92,18 @@ public:
                  size_t maxMelsCallback = kMaxMelValues);
 
     /**
-     * Sets the output RS2 value for momentary exposure warnings. Default value
+     * Sets the output RS2 upper bound for momentary exposure warnings. Default value
      * is 100dBA as specified in IEC62368-1 3rd edition. Must not be higher than
      * 100dBA and not lower than 80dBA.
      *
-     * \param rs2Value value to use for momentary exposure
+     * \param rs2Value to use for momentary exposure
      * \return NO_ERROR if rs2Value is between 80dBA amd 100dBA or BAD_VALUE
      *   otherwise
      */
-    status_t setOutputRs2(float rs2Value);
+    status_t setOutputRs2UpperBound(float rs2Value);
 
-    /** Returns the RS2 value used for momentary exposures. */
-    float getOutputRs2() const;
+    /** Returns the RS2 upper bound used for momentary exposures. */
+    float getOutputRs2UpperBound() const;
 
     /** Updates the device id. */
     void setDeviceId(audio_port_handle_t deviceId);
@@ -123,9 +123,18 @@ public:
      * \param bytes            buffer size in bytes.
      *
      * \return the number of bytes that were processed. Note: the method will
-     *   output 0 for sample rates that are not supported.
+     *   output 0 if the processor is paused or the sample rate is not supported.
      */
     int32_t process(const void* buffer, size_t bytes);
+
+    /**
+     * Pauses the processing of MEL values. Process calls after this will be
+     * ignored until resume.
+     */
+    void pause();
+
+    /** Resumes the processing of MEL values. */
+    void resume();
 
     /**
      * Sets the given attenuation for the MEL calculation. This can be used when
@@ -229,9 +238,10 @@ private:
     // device id used for the callbacks
     std::atomic<audio_port_handle_t> mDeviceId;
     // Value used for momentary exposure
-    std::atomic<float> mRs2Value;
+    std::atomic<float> mRs2UpperBound;
     // number of samples in the energy
     std::atomic_size_t mCurrentSamples;
+    std::atomic_bool mPaused;
 };
 
 }  // namespace android::audio_utils
